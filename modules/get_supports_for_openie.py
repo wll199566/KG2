@@ -61,13 +61,13 @@ if __name__ == '__main__':
                   "../data/ARC-Supports/ARC-Challenge/ARC-Challenge-Dev-Supports.jsonl",\
                   "../data/ARC-Supports/ARC-Challenge/ARC-Challenge-Test-Supports.jsonl"]
 
-    output_file = ["./ARC-Supports-split/ARC-Easy/ARC-Easy-Train-Supports-split.txt",\
-                   "./ARC-Supports-split/ARC-Easy/ARC-Easy-Dev-Supports-split.txt",\
-                   "./ARC-Supports-split/ARC-Easy/ARC-Easy-Test-Supports-split.txt",\
-                   "./ARC-Supports-split/ARC-Challenge/ARC-Challenge-Train-Supports-split.txt",\
-                   "./ARC-Supports-split/ARC-Challenge/ARC-Challenge-Dev-Supports-split.txt",\
-                   "./ARC-Supports-split/ARC-Challenge/ARC-Challenge-Test-Supports-split.txt"]
+    output_file = ["../data/ARC-Supports-split/ARC-Easy/ARC-Easy-Train-Supports-split.txt",\
+                   "../data/ARC-Supports-split/ARC-Easy/ARC-Easy-Dev-Supports-split.txt",\
+                   "../data/ARC-Supports-split/ARC-Easy/ARC-Easy-Test-Supports-split.txt",\
+                   "../data/ARC-Supports-split/ARC-Challenge/ARC-Challenge-Train-Supports-split.txt",\
+                   "../data/ARC-Supports-split/ARC-Challenge/ARC-Challenge-Dev-Supports-split.txt",\
+                   "../data/ARC-Supports-split/ARC-Challenge/ARC-Challenge-Test-Supports-split.txt"]
     
-    output_path = ["./ARC-Supports-split", "./ARC-Supports-split/ARC-Easy", "./ARC-Supports-split/ARC-Challenge"]
+    output_path = ["../data/ARC-Supports-split", "../data/ARC-Supports-split/ARC-Easy", "../data/ARC-Supports-split/ARC-Challenge"]
 
     get_supports_for_openie(input_file, output_file, output_path)

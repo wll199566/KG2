@@ -58,13 +58,13 @@ if __name__ == '__main__':
                   "../data/ARC-Hypothesis/ARC-Challenge/ARC-Challenge-Dev-Hypothesis.jsonl",\
                   "../data/ARC-Hypothesis/ARC-Challenge/ARC-Challenge-Test-Hypothesis.jsonl"]
 
-    output_file = ["./ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Train-Hypothesis-split.txt",\
-                   "./ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Dev-Hypothesis-split.txt",\
-                   "./ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Test-Hypothesis-split.txt",\
-                   "./ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Train-Hypothesis-split.txt",\
-                   "./ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-split.txt",\
-                   "./ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Test-Hypothesis-split.txt"]
+    output_file = ["../data/ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Train-Hypothesis-split.txt",\
+                   "../data/ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Dev-Hypothesis-split.txt",\
+                   "../data/ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Test-Hypothesis-split.txt",\
+                   "../data/ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Train-Hypothesis-split.txt",\
+                   "../data/ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-split.txt",\
+                   "../data/ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Test-Hypothesis-split.txt"]
 
-    output_path = ["./ARC-Hypothesis-split", "./ARC-Hypothesis-split/ARC-Easy", "./ARC-Hypothesis-split/ARC-Challenge"]
+    output_path = ["../data/ARC-Hypothesis-split", "../data/ARC-Hypothesis-split/ARC-Easy", "../data/ARC-Hypothesis-split/ARC-Challenge"]
 
     get_hypothesis_for_openie(input_file, output_file, output_path)
