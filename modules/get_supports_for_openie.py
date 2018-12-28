@@ -35,9 +35,18 @@ def get_supports_for_openie(input_file, output_file, output_path):
             with open(output_file[index], 'wt') as fout:
                 for i, line in enumerate(fin, 1):
                     question_set = json.loads(line)
+                    id = question_set['id']
                     for support in question_set['supports']:
                         for text in support["support"]:
                             fout.write(text["text"])
+                            fout.write('\n')
+                            fout.write('-'*20 + 'id:' + id + '-label:' + support["label"] + '-eid:' + text["eid"] + '-'*20 + '\n')
+                            fout.write('\n')
+                        #fout.write('\n')
+                        fout.write('*'*20 + 'id:' + id + '-label:' + support["label"] + '*'*20 + '\n')
+                        fout.write('\n')
+                    fout.write('#'*20 + 'id:' + id + '#'*20 + '\n')
+                    fout.write('\n')    
                 print(input_file[index], " has ", i, "supports in total.")
             print("Finish processing ", input_file[index])
 
@@ -45,20 +54,20 @@ def get_supports_for_openie(input_file, output_file, output_path):
 
 if __name__ == '__main__':
 
-    input_file = ["/scratch/hw1666/KG2/data/ARC-Supports/ARC-Easy/ARC-Easy-Train-Supports.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Supports/ARC-Easy/ARC-Easy-Dev-Supports.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Supports/ARC-Easy/ARC-Easy-Test-Supports.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Supports/ARC-Challenge/ARC-Challenge-Train-Supports.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Supports/ARC-Challenge/ARC-Challenge-Dev-Supports.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Supports/ARC-Challenge/ARC-Challenge-Test-Supports.jsonl"]
+    input_file = ["../data/ARC-Supports/ARC-Easy/ARC-Easy-Train-Supports.jsonl",\
+                  "../data/ARC-Supports/ARC-Easy/ARC-Easy-Dev-Supports.jsonl",\
+                  "../data/ARC-Supports/ARC-Easy/ARC-Easy-Test-Supports.jsonl",\
+                  "../data/ARC-Supports/ARC-Challenge/ARC-Challenge-Train-Supports.jsonl",\
+                  "../data/ARC-Supports/ARC-Challenge/ARC-Challenge-Dev-Supports.jsonl",\
+                  "../data/ARC-Supports/ARC-Challenge/ARC-Challenge-Test-Supports.jsonl"]
 
-    output_file = ["/scratch/hw1666/KG2/data/ARC-Supports-split/ARC-Easy/ARC-Easy-Train-Supports-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Supports-split/ARC-Easy/ARC-Easy-Dev-Supports-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Supports-split/ARC-Easy/ARC-Easy-Test-Supports-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Supports-split/ARC-Challenge/ARC-Challenge-Train-Supports-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Supports-split/ARC-Challenge/ARC-Challenge-Dev-Supports-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Supports-split/ARC-Challenge/ARC-Challenge-Test-Supports-split.txt"]
+    output_file = ["./ARC-Supports-split/ARC-Easy/ARC-Easy-Train-Supports-split.txt",\
+                   "./ARC-Supports-split/ARC-Easy/ARC-Easy-Dev-Supports-split.txt",\
+                   "./ARC-Supports-split/ARC-Easy/ARC-Easy-Test-Supports-split.txt",\
+                   "./ARC-Supports-split/ARC-Challenge/ARC-Challenge-Train-Supports-split.txt",\
+                   "./ARC-Supports-split/ARC-Challenge/ARC-Challenge-Dev-Supports-split.txt",\
+                   "./ARC-Supports-split/ARC-Challenge/ARC-Challenge-Test-Supports-split.txt"]
     
-    output_path = ["/scratch/hw1666/KG2/data/ARC-Supports-split", "/scratch/hw1666/KG2/data/ARC-Supports-split/ARC-Easy", "/scratch/hw1666/KG2/data/ARC-Supports-split/ARC-Challenge"]
+    output_path = ["./ARC-Supports-split", "./ARC-Supports-split/ARC-Easy", "./ARC-Supports-split/ARC-Challenge"]
 
     get_supports_for_openie(input_file, output_file, output_path)

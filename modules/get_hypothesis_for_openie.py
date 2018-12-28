@@ -35,9 +35,15 @@ def get_hypothesis_for_openie(input_file, output_file, output_path):
             with open(output_file[index], 'wt') as fout:
                 for i, line in enumerate(fin, 1):
                     question_set = json.loads(line)
+                    id = question_set['id']
                     for hypothesis in question_set['hypothesis']:
                         fout.write(hypothesis["text"])
                         fout.write('\n')
+                        fout.write('\n')
+                        fout.write('-'*20 + 'id:' + id + '-label:' + hypothesis["label"] + '-'*20 + '\n')
+                        fout.write('\n')
+                    fout.write('*'*20 + 'id:' + id + '*'*20 + '\n')
+                    fout.write('\n')    
                 print(input_file[index], " has ", i, "hypothesis in total.")
             print("Finish processing ", input_file[index])
 
@@ -45,20 +51,20 @@ def get_hypothesis_for_openie(input_file, output_file, output_path):
 
 if __name__ == '__main__':
 
-    input_file = ["/scratch/hw1666/KG2/data/ARC-Hypothesis/ARC-Easy/ARC-Easy-Train-Hypothesis.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Hypothesis/ARC-Easy/ARC-Easy-Dev-Hypothesis.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Hypothesis/ARC-Easy/ARC-Easy-Test-Hypothesis.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Hypothesis/ARC-Challenge/ARC-Challenge-Train-Hypothesis.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Hypothesis/ARC-Challenge/ARC-Challenge-Dev-Hypothesis.jsonl",\
-                  "/scratch/hw1666/KG2/data/ARC-Hypothesis/ARC-Challenge/ARC-Challenge-Test-Hypothesis.jsonl"]
+    input_file = ["../data/ARC-Hypothesis/ARC-Easy/ARC-Easy-Train-Hypothesis.jsonl",\
+                  "../data/ARC-Hypothesis/ARC-Easy/ARC-Easy-Dev-Hypothesis.jsonl",\
+                  "../data/ARC-Hypothesis/ARC-Easy/ARC-Easy-Test-Hypothesis.jsonl",\
+                  "../data/ARC-Hypothesis/ARC-Challenge/ARC-Challenge-Train-Hypothesis.jsonl",\
+                  "../data/ARC-Hypothesis/ARC-Challenge/ARC-Challenge-Dev-Hypothesis.jsonl",\
+                  "../data/ARC-Hypothesis/ARC-Challenge/ARC-Challenge-Test-Hypothesis.jsonl"]
 
-    output_file = ["/scratch/hw1666/KG2/data/ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Train-Hypothesis-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Dev-Hypothesis-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Test-Hypothesis-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Train-Hypothesis-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-split.txt",\
-                   "/scratch/hw1666/KG2/data/ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Test-Hypothesis-split.txt"]
+    output_file = ["./ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Train-Hypothesis-split.txt",\
+                   "./ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Dev-Hypothesis-split.txt",\
+                   "./ARC-Hypothesis-split/ARC-Easy/ARC-Easy-Test-Hypothesis-split.txt",\
+                   "./ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Train-Hypothesis-split.txt",\
+                   "./ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-split.txt",\
+                   "./ARC-Hypothesis-split/ARC-Challenge/ARC-Challenge-Test-Hypothesis-split.txt"]
 
-    output_path = ["/scratch/hw1666/KG2/data/ARC-Hypothesis-split", "/scratch/hw1666/KG2/data/ARC-Hypothesis-split/ARC-Easy", "/scratch/hw1666/KG2/data/ARC-Hypothesis-split/ARC-Challenge"]
+    output_path = ["./ARC-Hypothesis-split", "./ARC-Hypothesis-split/ARC-Easy", "./ARC-Hypothesis-split/ARC-Challenge"]
 
     get_hypothesis_for_openie(input_file, output_file, output_path)
