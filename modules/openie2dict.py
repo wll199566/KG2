@@ -27,6 +27,7 @@ def openie2dict_hypo(openie_file, output_file):
     To convert openie result to dictionary for each question and write into a file.
     The structure of the dictionary contains question, choice, sentence and line level.
     - openie_file: path to the hypothesis openie result file.
+    - output_file: path to the output dictionary file.
     """
     # seperate each choice and each question
     with open(openie_file, 'r') as fin:
@@ -182,7 +183,8 @@ def openie2dict_support(openie_file, output_file):
     """
     To convert openie result to dictionary for each question and write into a file.
     The structure of the dictionary contains question, choice, support, sentence and line level.
-    - openie_file: path to the hypothesis openie result file.
+    - openie_file: path to the support openie result file.
+    - output_file: path to the output dictionary file.
     """
     # seperate each choice and each question
     with open(openie_file, 'r') as fin:
