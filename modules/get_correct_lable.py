@@ -24,7 +24,7 @@ def get_correct_label(input_file, output_file):
                 dict_for_ques = json.loads(line)
                 # construct label to index dictionary
                 label2index = {}  # look up dictionary for labels
-                for i, choice in enumerate(dict_for_ques["choices"]):
+                for i, choice in enumerate(dict_for_ques["question"]["choices"]):
                     label2index[choice["label"]] = i 
                 # construct the output dictionary
                 dict_for_ans = {}
