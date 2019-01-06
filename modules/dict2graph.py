@@ -226,30 +226,27 @@ def dict2graph_support(input_file, output_file):
 if __name__ == "__main__":
 
     # dict2graph for hypothesis
-    # hypo_folders = ["../data/ARC-Hypothesis-networkx-graph",
-    #                 "../data/ARC-Hypothesis-networkx-graph/ARC-Easy",
-    #                 "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge"]
-
-    # hypo_input_files = ["../data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Train-Hypothesis-dict.txt",
-    #                     "../data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Dev-Hypothesis-dict.txt",
-    #                     "../data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Test-Hypothesis-dict.txt",
-    #                     "../data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Train-Hypothesis-dict.txt",
-    #                     "../data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-dict.txt",
-    #                     "../data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Test-Hypothesis-dict.txt"]
-
-    # hypo_output_files = ["../data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Train-Hypothesis-networkx-graph.txt",
-    #                      "../data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Dev-Hypothesis-networkx-graph.txt",
-    #                      "../data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Test-Hypothesis-networkx-graph.txt",
-    #                      "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Train-Hypothesis-networkx-graph.txt",
-    #                      "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-networkx-graph.txt",
-    #                      "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Test-Hypothesis-networkx-graph.txt"]
+    hypo_folders = ["../data/ARC-Hypothesis-networkx-graph",
+                    "../data/ARC-Hypothesis-networkx-graph/ARC-Easy",
+                    "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge"]
+    hypo_input_files = ["../data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Train-Hypothesis-dict.txt",
+                        "../data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Dev-Hypothesis-dict.txt",
+                        "../data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Test-Hypothesis-dict.txt",
+                        "../data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Train-Hypothesis-dict.txt",
+                        "../data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-dict.txt",
+                        "../data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Test-Hypothesis-dict.txt"]
+    hypo_output_files = ["../data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Train-Hypothesis-networkx-graph.txt",
+                         "../data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Dev-Hypothesis-networkx-graph.txt",
+                         "../data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Test-Hypothesis-networkx-graph.txt",
+                         "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Train-Hypothesis-networkx-graph.txt",
+                         "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-networkx-graph.txt",
+                         "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Test-Hypothesis-networkx-graph.txt"]
+    for folder in hypo_folders:
+        create_folder(folder)
+    for i in range(len(hypo_input_files)):
+        dict2graph_hypo(hypo_input_files[i], hypo_output_files[i])
     
-    # for folder in hypo_folders:
-    #     create_folder(folder)
-
-    # for i in range(len(hypo_input_files)):
-    #     dict2graph_hypo(hypo_input_files[i], hypo_output_files[i])
-
+    
     # dict2graph for hypothesis
     support_folders = ["../data/ARC-Supports-networkx-graph",
                        "../data/ARC-Supports-networkx-graph/ARC-Easy",
