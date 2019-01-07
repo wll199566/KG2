@@ -11,6 +11,7 @@ sys.path.append("../")
 # print(sys.path)
 
 from utils.file_system_utils import create_folder
+from utils.nlp_utils import clean_data
 
 def max_indeces(score_list):
     """
@@ -69,16 +70,16 @@ def openie2dict_hypo(openie_file, output_file):
                             # add subjective and predicate
                             # print(all_triples_for_sentence)
                             # print(indeces)
-                            triple_for_sentence['sub'] = all_triples_for_sentence[indeces[0]][0]
-                            triple_for_sentence['pred'] = all_triples_for_sentence[indeces[0]][1]
+                            triple_for_sentence['sub'] = clean_data(all_triples_for_sentence[indeces[0]][0])
+                            triple_for_sentence['pred'] = clean_data(all_triples_for_sentence[indeces[0]][1])
                             # add the time and location
                             for piece in all_triples_for_sentence[indeces[0]]:
                                 if re.search(r'^T:', piece) is not None:
-                                    triple_for_sentence['time'] = re.sub(
-                                        '^T:', '', piece)
+                                    triple_for_sentence['time'] = clean_data(re.sub(
+                                        '^T:', '', piece))
                                 if re.search(r'^L:', piece) is not None:
-                                    triple_for_sentence['loc'] = re.sub(
-                                        '^L:', '', piece)
+                                    triple_for_sentence['loc'] = clean_data(re.sub(
+                                        '^L:', '', piece))
                             # add objects
                             # iterate all the max scored sentence triple to get all the objects for that
                             # if there are more than two max openie score, then collect all obj
@@ -89,7 +90,7 @@ def openie2dict_hypo(openie_file, output_file):
                                 # iterate pieces for the highest scored sentence
                                 for piece in all_triples_for_sentence[index][2:]:
                                     if re.search(r'^T:', piece) is None and re.search(r'^L:', piece) is None:
-                                        obj.append(piece)
+                                        obj.append(clean_data(piece))
                                     else:
                                         continue
                             triple_for_sentence['obj'] = obj
@@ -228,16 +229,16 @@ def openie2dict_support(openie_file, output_file):
                             # add subjective and predicate
                             # print(all_triples_for_sentence)
                             # print(indeces)
-                            triple_for_sentence['sub'] = all_triples_for_sentence[indeces[0]][0]
-                            triple_for_sentence['pred'] = all_triples_for_sentence[indeces[0]][1]
+                            triple_for_sentence['sub'] = clean_data(all_triples_for_sentence[indeces[0]][0])
+                            triple_for_sentence['pred'] = clean_data(all_triples_for_sentence[indeces[0]][1])
                             # add the time and location
                             for piece in all_triples_for_sentence[indeces[0]]:
                                 if re.search(r'^T:', piece) is not None:
-                                    triple_for_sentence['time'] = re.sub(
-                                        '^T:', '', piece)
+                                    triple_for_sentence['time'] = clean_data(re.sub(
+                                        '^T:', '', piece))
                                 if re.search(r'^L:', piece) is not None:
-                                    triple_for_sentence['loc'] = re.sub(
-                                        '^L:', '', piece)
+                                    triple_for_sentence['loc'] = clean_data(re.sub(
+                                        '^L:', '', piece))
                             # add objects
                             # iterate all the max scored sentence triple to get all the objects for that
                             # if there are more than two max openie score, then collect all obj
@@ -248,7 +249,7 @@ def openie2dict_support(openie_file, output_file):
                                 # iterate pieces for the highest scored sentence
                                 for piece in all_triples_for_sentence[index][2:]:
                                     if re.search(r'^T:', piece) is None and re.search(r'^L:', piece) is None:
-                                        obj.append(piece)
+                                        obj.append(clean_data(piece))
                                     else:
                                         continue
                             triple_for_sentence['obj'] = obj
