@@ -7,6 +7,11 @@ so we need to store the number of choice for each hypothesis.
 import os
 import json
 
+import sys
+sys.path.append("../")
+
+from utils.nlp_utils import lemmatize_sentence, split_into_sentences
+
 def get_hypothesis_for_openie(input_file, output_file, output_path):
     """
     Arguments: 
@@ -31,13 +36,21 @@ def get_hypothesis_for_openie(input_file, output_file, output_path):
     for index in range(len(input_file)):
         with open(input_file[index], 'rt') as fin:
             if os.path.exists(output_file[index]):
-                raise Exception(output_file[index] + " has existed!")
+                #raise Exception(output_file[index] + " has existed!")
+                print(output_file[index], "has existed!")
             with open(output_file[index], 'wt') as fout:
                 for i, line in enumerate(fin, 1):
                     question_set = json.loads(line)
                     id = question_set['id']
                     for hypothesis in question_set['hypothesis']:
-                        fout.write(hypothesis["text"])
+                        # split the hypothesis text into sentences
+                        # and lemmatize them.
+                        sentence_list = split_into_sentences(hypothesis["text"])
+                        for k, sentence in enumerate(sentence_list):
+                            sentence_list[k] = lemmatize_sentence(sentence)
+                        text = '\n'.join(sentence_list)  
+                        # write into the output file.  
+                        fout.write(text)
                         fout.write('\n')
                         fout.write('\n')
                         fout.write('-'*20 + 'id:' + id + '-label:' + hypothesis["label"] + '-'*20 + '\n')
