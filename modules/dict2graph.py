@@ -91,11 +91,11 @@ def dict2graph_hypo(input_file, output_file):
                             # add edge from pred to time
                             if ('time' in sentence) and ('pred' in sentence):
                                 HG.add_edge(
-                                    piece2idx[sentence['time']], piece2idx[sentence['pred']], type='time')
+                                    piece2idx[sentence['pred']], piece2idx[sentence['time']], type='time')
                             # add edge from pred to location
                             if ('loc' in sentence) and ('pred' in sentence):
                                 HG.add_edge(
-                                    piece2idx[sentence['loc']], piece2idx[sentence['pred']], type='loc')
+                                    piece2idx[sentence['pred']], piece2idx[sentence['loc']], type='loc')
                     # print(HG.edges.data())
 
                     # store the graph into dict_for_choice (first make it json serializable)
@@ -200,11 +200,11 @@ def dict2graph_support(input_file, output_file):
                                 # add edge from pred to time
                                 if ('time' in sentence) and ('pred' in sentence):
                                     SG.add_edge(
-                                        piece2idx[sentence['time']], piece2idx[sentence['pred']], type='time')
+                                        piece2idx[sentence['pred']], piece2idx[sentence['time']], type='time')
                                 # add edge from pred to location
                                 if ('loc' in sentence) and ('pred' in sentence):
                                     SG.add_edge(
-                                        piece2idx[sentence['loc']], piece2idx[sentence['pred']], type='loc')
+                                        piece2idx[sentence['pred']], piece2idx[sentence['loc']], type='loc')
                         # print(SG.edges.data())
 
                         # store the graph into dict_for_choice (first make it json serializable)
@@ -226,21 +226,21 @@ def dict2graph_support(input_file, output_file):
 if __name__ == "__main__":
 
     # dict2graph for hypothesis
-    hypo_folders = ["../data/ARC-Hypothesis-networkx-graph",
-                    "../data/ARC-Hypothesis-networkx-graph/ARC-Easy",
-                    "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge"]
-    hypo_input_files = ["../data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Train-Hypothesis-dict.txt",
-                        "../data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Dev-Hypothesis-dict.txt",
-                        "../data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Test-Hypothesis-dict.txt",
-                        "../data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Train-Hypothesis-dict.txt",
-                        "../data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-dict.txt",
-                        "../data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Test-Hypothesis-dict.txt"]
-    hypo_output_files = ["../data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Train-Hypothesis-networkx-graph.txt",
-                         "../data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Dev-Hypothesis-networkx-graph.txt",
-                         "../data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Test-Hypothesis-networkx-graph.txt",
-                         "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Train-Hypothesis-networkx-graph.txt",
-                         "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-networkx-graph.txt",
-                         "../data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Test-Hypothesis-networkx-graph.txt"]
+    hypo_folders = ["../unlemmatized_data/ARC-Hypothesis-networkx-graph",
+                    "../unlemmatized_data/ARC-Hypothesis-networkx-graph/ARC-Easy",
+                    "../unlemmatized_data/ARC-Hypothesis-networkx-graph/ARC-Challenge"]
+    hypo_input_files = ["../unlemmatized_data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Train-Hypothesis-dict.txt",
+                        "../unlemmatized_data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Dev-Hypothesis-dict.txt",
+                        "../unlemmatized_data/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Test-Hypothesis-dict.txt",
+                        "../unlemmatized_data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Train-Hypothesis-dict.txt",
+                        "../unlemmatized_data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-dict.txt",
+                        "../unlemmatized_data/ARC-Hypothesis-dict/ARC-Challenge/ARC-Challenge-Test-Hypothesis-dict.txt"]
+    hypo_output_files = ["../unlemmatized_data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Train-Hypothesis-networkx-graph.txt",
+                         "../unlemmatized_data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Dev-Hypothesis-networkx-graph.txt",
+                         "../unlemmatized_data/ARC-Hypothesis-networkx-graph/ARC-Easy/ARC-Easy-Test-Hypothesis-networkx-graph.txt",
+                         "../unlemmatized_data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Train-Hypothesis-networkx-graph.txt",
+                         "../unlemmatized_data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Dev-Hypothesis-networkx-graph.txt",
+                         "../unlemmatized_data/ARC-Hypothesis-networkx-graph/ARC-Challenge/ARC-Challenge-Test-Hypothesis-networkx-graph.txt"]
     for folder in hypo_folders:
         create_folder(folder)
     for i in range(len(hypo_input_files)):
@@ -248,23 +248,23 @@ if __name__ == "__main__":
     
     
     # dict2graph for hypothesis
-    support_folders = ["../data/ARC-Supports-networkx-graph",
-                       "../data/ARC-Supports-networkx-graph/ARC-Easy",
-                       "../data/ARC-Supports-networkx-graph/ARC-Challenge"]
+    support_folders = ["../unlemmatized_data/ARC-Supports-networkx-graph",
+                       "../unlemmatized_data/ARC-Supports-networkx-graph/ARC-Easy",
+                       "../unlemmatized_data/ARC-Supports-networkx-graph/ARC-Challenge"]
 
-    support_input_files = ["../data/ARC-Supports-dict/ARC-Easy/ARC-Easy-Train-Supports-dict.txt",
-                           "../data/ARC-Supports-dict/ARC-Easy/ARC-Easy-Dev-Supports-dict.txt",
-                           "../data/ARC-Supports-dict/ARC-Easy/ARC-Easy-Test-Supports-dict.txt",
-                           "../data/ARC-Supports-dict/ARC-Challenge/ARC-Challenge-Train-Supports-dict.txt",
-                           "../data/ARC-Supports-dict/ARC-Challenge/ARC-Challenge-Dev-Supports-dict.txt",
-                           "../data/ARC-Supports-dict/ARC-Challenge/ARC-Challenge-Test-Supports-dict.txt"]
+    support_input_files = ["../unlemmatized_data/ARC-Supports-dict/ARC-Easy/ARC-Easy-Train-Supports-dict.txt",
+                           "../unlemmatized_data/ARC-Supports-dict/ARC-Easy/ARC-Easy-Dev-Supports-dict.txt",
+                           "../unlemmatized_data/ARC-Supports-dict/ARC-Easy/ARC-Easy-Test-Supports-dict.txt",
+                           "../unlemmatized_data/ARC-Supports-dict/ARC-Challenge/ARC-Challenge-Train-Supports-dict.txt",
+                           "../unlemmatized_data/ARC-Supports-dict/ARC-Challenge/ARC-Challenge-Dev-Supports-dict.txt",
+                           "../unlemmatized_data/ARC-Supports-dict/ARC-Challenge/ARC-Challenge-Test-Supports-dict.txt"]
 
-    support_output_files = ["../data/ARC-Supports-networkx-graph/ARC-Easy/ARC-Easy-Train-Supports-networkx-graph.txt",
-                            "../data/ARC-Supports-networkx-graph/ARC-Easy/ARC-Easy-Dev-Supports-networkx-graph.txt",
-                            "../data/ARC-Supports-networkx-graph/ARC-Easy/ARC-Easy-Test-Supports-networkx-graph.txt",
-                            "../data/ARC-Supports-networkx-graph/ARC-Challenge/ARC-Challenge-Train-Supports-networkx-graph.txt",
-                            "../data/ARC-Supports-networkx-graph/ARC-Challenge/ARC-Challenge-Dev-Supports-networkx-graph.txt",
-                            "../data/ARC-Supports-networkx-graph/ARC-Challenge/ARC-Challenge-Test-Supports-networkx-graph.txt"]
+    support_output_files = ["../unlemmatized_data/ARC-Supports-networkx-graph/ARC-Easy/ARC-Easy-Train-Supports-networkx-graph.txt",
+                            "../unlemmatized_data/ARC-Supports-networkx-graph/ARC-Easy/ARC-Easy-Dev-Supports-networkx-graph.txt",
+                            "../unlemmatized_data/ARC-Supports-networkx-graph/ARC-Easy/ARC-Easy-Test-Supports-networkx-graph.txt",
+                            "../unlemmatized_data/ARC-Supports-networkx-graph/ARC-Challenge/ARC-Challenge-Train-Supports-networkx-graph.txt",
+                            "../unlemmatized_data/ARC-Supports-networkx-graph/ARC-Challenge/ARC-Challenge-Dev-Supports-networkx-graph.txt",
+                            "../unlemmatized_data/ARC-Supports-networkx-graph/ARC-Challenge/ARC-Challenge-Test-Supports-networkx-graph.txt"]
     
     for folder in support_folders:
         create_folder(folder)

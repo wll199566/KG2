@@ -98,12 +98,12 @@ if __name__ == "__main__":
     #print(hypo_graph["id"])
     #print(supp_graph["id"])
     #print(label["id"])
-    print("\n")
-    print(hypo_graph)
-    print("\n")
-    print(supp_graph)
-    print("\n")
-    print(label)  
+    #print("\n")
+    #print(hypo_graph)
+    #print("\n")
+    #print(supp_graph)
+    #print("\n")
+    #print(label)  
 
                              
 
