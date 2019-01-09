@@ -90,7 +90,9 @@ def openie2dict_hypo(openie_file, output_file):
                                 # iterate pieces for the highest scored sentence
                                 for piece in all_triples_for_sentence[index][2:]:
                                     if re.search(r'^T:', piece) is None and re.search(r'^L:', piece) is None:
-                                        obj.append(clean_data(piece))
+                                        cleaned_piece = clean_data(piece)
+                                        if cleaned_piece != "":
+                                            obj.append(clean_data(piece))
                                     else:
                                         continue
                             triple_for_sentence['obj'] = obj
@@ -249,7 +251,9 @@ def openie2dict_support(openie_file, output_file):
                                 # iterate pieces for the highest scored sentence
                                 for piece in all_triples_for_sentence[index][2:]:
                                     if re.search(r'^T:', piece) is None and re.search(r'^L:', piece) is None:
-                                        obj.append(clean_data(piece))
+                                        cleaned_piece = clean_data(piece)
+                                        if cleaned_piece != "":
+                                            obj.append(clean_data(piece))
                                     else:
                                         continue
                             triple_for_sentence['obj'] = obj
