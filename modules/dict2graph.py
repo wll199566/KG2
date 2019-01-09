@@ -72,10 +72,15 @@ def dict2graph_hypo(input_file, output_file):
                         HG.add_node(index, context=content)
                     # print(HG.nodes.data())
 
+                    # construct a set to record the predicate node index
+                    pred_index = set()
+
                     # add edges for each hypothesis graph
                     for sentence in choice['triples_for_choice']:
                         # print(sentence)
                         # if empty dictionary, we add a node with index -1 and context 'Empty'
+                        # NOTE that the Empty sentence node is always added finally to the graph
+                        # compared to other nodes.
                         if sentence == {}:
                             HG.add_node(-1, context='Empty')
                         else:
@@ -96,10 +101,19 @@ def dict2graph_hypo(input_file, output_file):
                             if ('loc' in sentence) and ('pred' in sentence):
                                 HG.add_edge(
                                     piece2idx[sentence['pred']], piece2idx[sentence['loc']], type='loc')
+                            
+                            # add the pred index into the pred node set
+                            if 'pred' in sentence:
+                                pred_index.add(piece2idx[sentence['pred']])
+
+                                            
                     # print(HG.edges.data())
 
                     # store the graph into dict_for_choice (first make it json serializable)
                     dict_for_choice['graph'] = nx.node_link_data(HG)
+                    # store the pred index set into dict_for_choice
+                    dict_for_choice['pred_idx'] = list(pred_index)
+
                     # add it into triples_for_question list
                     graphs_for_question.append(dict_for_choice)
 
@@ -181,6 +195,9 @@ def dict2graph_support(input_file, output_file):
                             SG.add_node(index, context=content)
                         # print(SG.nodes.data())
 
+                        # construct a set to record the predicate node index
+                        pred_index = set()
+
                         # add edges for each support graph
                         for sentence in support['triples_for_support']:
                             # print(sentence)
@@ -205,10 +222,15 @@ def dict2graph_support(input_file, output_file):
                                 if ('loc' in sentence) and ('pred' in sentence):
                                     SG.add_edge(
                                         piece2idx[sentence['pred']], piece2idx[sentence['loc']], type='loc')
+                                # add pred node index into the pred_index set
+                                if 'pred' in sentence:
+                                    pred_index.add(piece2idx[sentence['pred']])
                         # print(SG.edges.data())
 
-                        # store the graph into dict_for_choice (first make it json serializable)
+                        # store the graph into dict_for_support (first make it json serializable)
                         dict_for_support['graph'] = nx.node_link_data(SG)
+                        # store the pred node index into dict_for_support
+                        dict_for_support['pred_idx'] = list(pred_index)
                         # add it into graph_for_choice list
                         graphs_for_choice.append(dict_for_support)
                         
