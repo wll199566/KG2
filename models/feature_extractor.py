@@ -22,11 +22,11 @@ class FeatureExtractor(nn.Module):
         Args:
             -token2idx_dict: token_to_index dictionary.
             -pretrained_mtx: pretrained word representation matrix.
-            -hidden_size: size of hidden state.
+            -hidden_size: size of hidden state of LSTM, which is also the dim for each graph node.
             -num_layers: the number of LSTM layers for each step.
             -freeze_embedding: whether to continue to train the pretrained word matrix.
         """
-        super(FeatureExtracter, self).__init__()
+        super(FeatureExtractor, self).__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.num_embeddings, self.embedding_dim = pretrained_mtx.shape
@@ -37,7 +37,7 @@ class FeatureExtractor(nn.Module):
         #self.embedding = nn.Embedding(self.num_embeddings, self.embedding_dim)
         # initialize the embedding matrix using pretrained_mtx.
         #self.embed.weight.data.copy_(torch.from_numpy(pretrained_mtx))
-        self.embedding = nn.Embedding.from_pretrained(torch.from_numpy(pretrained_mtx), freeze=freeze_embedding)
+        self.embedding = nn.Embedding.from_pretrained(torch.from_numpy(pretrained_mtx).float(), freeze=freeze_embedding)
 
         self.lstm = nn.LSTM(self.embedding_dim, self.hidden_size, num_layers=self.num_layers, batch_first=True)
 
@@ -90,12 +90,12 @@ class FeatureExtractor(nn.Module):
 
         # step 9: construct a dgl net.
         dgl_graph = dgl.DGLGraph()
-        dgl_graph.add_nodes(len(list(graph.edges())))
+        dgl_graph.add_nodes(len(list(graph.nodes())))
         src = []
         dst = []
         for edge in list(graph.edges()):
             src.append(edge[0])
-            dst.append(edge[1])
+            dst.append(edge[1])    
         dgl_graph.add_edges(src, dst)
 
         # step 10: initialize and fill the "feat" field for each dgl graph node.
