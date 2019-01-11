@@ -177,6 +177,8 @@ def dict2graph_support(support_ques_dict):
             # construct a set to record the predicate node index
             pred_index = set()
             # add edges for each support graph
+            if support['triples_for_support'] == []:
+                SG.add_node(-1, context='Empty')
             for sentence in support['triples_for_support']:
                 # print(sentence)
                 # if empty dictionary, we add a node with index -1 and context 'Empty'
