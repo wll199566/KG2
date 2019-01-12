@@ -1,0 +1,19 @@
+# Adam parameters
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-6
+
+# hyperparameters
+epochs: 500
+embedding_size: 50
+gnn_iter_num: 10
+gnn_hidden_size: 30
+gnn_out_size: 50
+gnn_activation: 'relu'
+init_learning_rate: 0.001
+is_easy: True 
+
+# system parameters
+log_interval: 100
+seed: 1
+best_model: best_model.pth
