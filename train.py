@@ -23,30 +23,66 @@ from models.GNN import GCN
 # modules
 from ARC_Dataset import ARC_Dataset
 from modules.dict2graph_each_dict import dict2graph_hypo, dict2graph_support
+
+# utils
 from utils.nlp_utils import load_token2idx, load_word_matrix
+from utils.file_system_utils import load_config
+from utils.file_system_utils import create_folder
+from utils.Timer import Timer
+from utils.AverageMeter import AverageMeter
+from utils import torch_utils 
 
 # system
 import argparse
+import time
 
+# create folders to store checkpoints and log files
+create_folder('checkpoints')
+folderPath = 'checkpoints/session_' + Timer.timeFilenameString() + '/'
+create_folder(folderPath)
+
+create_folder('log')
+logPath = 'log/log_' + Timer.timeFilenameString()
+
+params = load_config('config.yaml')
+
+torch.set_default_tensor_type('torch.cuda.FloatTensor')
+
+batch_time = AverageMeter()
+data_time = AverageMeter()
+losses = AverageMeter()
+losses_list = [AverageMeter() for i in range(6)]
+end = time.time()
+best_model = params['best_model']
+
+def append_line_to_log(line='\n'):
+    with open(logPath, 'a') as f:
+        f.write(line + '\n')
 
 def parse_cli():
     parser = argparse.ArgumentParser(description='PyTorch KG2')
     
-    # TODO: add parser
+    # add parser
     # hyperparameter
-    parser.add_argument('--embedding_size', default=50, type=int, metavar='EMBED',
+    parser.add_argument('--batch-size', type=int, default=params['batch_size'], metavar='N',
+                        help='input batch size for training (default: ' + str(params['batch_size']) + ')')
+    
+    parser.add_argument('--epochs', type=int, default=params['epochs'], metavar='N',
+                        help='number of epochs to train (default: ' + str(params['epochs']) + ')')
+
+    parser.add_argument('--embedding_size', default=params['embedding_size'], type=int, metavar='EMBED',
                         help="dimension of word vector.")
 
-    parser.add_argument('--gnn_iter_num', default=10, type=int, metavar="GNNITER",
+    parser.add_argument('--gnn_iter_num', default=params['gnn_iter_num'], type=int, metavar="GNNITER",
                         help="the number of iteration of gnn to get the steady states")
     
-    parser.add_argument('--gnn_hidden_size', default=30, type=int, metavar="HIDDEN",
+    parser.add_argument('--gnn_hidden_size', default=params['gnn_hidden_size'], type=int, metavar="HIDDEN",
                         help="the hidden size when compute the aggregation function of massages")
     
-    parser.add_argument('--gnn_out_size', default=50, type=int, metavar="OUT",
+    parser.add_argument('--gnn_out_size', default=params['gnn_out_size'], type=int, metavar="OUT",
                         help="the final size when compute the aggregation function of massages")
     
-    parser.add_argument('--gnn_activation', default='relu', type=str, metavar='ACT',
+    parser.add_argument('--gnn_activation', default=params['gnn_activation'], type=str, metavar='ACT',
                        help="gnn activation function of aggregation function.")
 
     parser.add_argument('--epochs', type=int, default=params['epochs'], metavar='N',
@@ -55,8 +91,8 @@ def parse_cli():
     parser.add_argument('--lr', type=float, default=params['init_learning_rate'], metavar='LR',
                         help='inital learning rate (default: ' + str(params['init_learning_rate']) + ')')
 
-    parser.add_argument('--decay', type=float, default=params['decay'], metavar='DE',
-                        help='SGD learning rate decay (default: ' + str(params['decay']) + ')')
+    #parser.add_argument('--decay', type=float, default=params['decay'], metavar='DE',
+    #                    help='SGD learning rate decay (default: ' + str(params['decay']) + ')')
 
     parser.add_argument('--beta1', type=float, default=params['beta1'], metavar='B1',
                         help=' Adam parameter beta1 (default: ' + str(params['beta1']) + ')')
@@ -67,8 +103,8 @@ def parse_cli():
     parser.add_argument('--epsilon', type=float, default=params['epsilon'], metavar='EL',
                         help=' Adam regularization parameter (default: ' + str(params['epsilon']) + ')')
 
-    parser.add_argument('--dampening', type=float, default=params['dampening'], metavar='DA',
-                        help='SGD dampening (default: ' + str(params['dampening']) + ')')                    
+    #parser.add_argument('--dampening', type=float, default=params['dampening'], metavar='DA',
+    #                    help='SGD dampening (default: ' + str(params['dampening']) + ')')                    
                    
     # system training
     parser.add_argument('--word2vec_dir', default='./data', type=str, metavar='PATHW2V',
@@ -80,7 +116,7 @@ def parse_cli():
     parser.add_argument('--val_dir', default='./data', type=str, metavar='PATHV', 
                         help="path to the root folder containing all the validation data folders")
     
-    parser.add_argument('--is_easy', default=True, type=bool, metavar='EASY',
+    parser.add_argument('--is_easy', default=params['is_easy'], type=bool, metavar='EASY',
                         help="ARC-Easy(default) or ARC-Challenge dataset")
 
     parser.add_argument('--log-interval', type=int, default=params['log_interval'], metavar='N',
@@ -245,7 +281,8 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
         loss = criterion(max_scores.unsqueeze(0), label["answerKey"])
         
         # to the backprop
-        optimizer.zero_grad()
+        feature_extractor_model.zero_grad()
+        gnn_model.zero_grad()
         loss.backward()
         optimizer.step()
 
@@ -419,7 +456,7 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
         log_callback()
         
         log_callback('Loss = {loss:.8f}\t'
-                .format(1, loss1=loss.item()))
+                .format(loss=loss.item()))
 
         log_callback(Timer.timeString())
 
@@ -463,19 +500,17 @@ if __name__ == "__main__":
     
     gnn = GCN(args.embedding_size, args.gnn_hidden_size, args.gnn_out_size, activation_func)
 
-    # define optimizer
-    optimizer_lstm = optim.Adam(feature_extractor.parameters(), lr=args.lr, betas=(args.beta1,args.beta2), eps=args.epsilon)
-    optimizer_gnn = optim.Adam(gnn.parameters(), lr=args.lr, betas=(args.beta1,args.beta2), eps=args.epsilon)
+    # define optimizer for lstm and gnn at the same time
+    optimizer = optim.Adam(filter(lambda p: p.requirs_grad, list(feature_extractor.parameters()) + list(gnn.parameters())), lr=args.lr, betas=(args.beta1,args.beta2), eps=args.epsilon)
     
     # define scheduler
-    scheduler_lstm = lr_scheduler.ReduceLROnPlateau(optimizer_lstm, mode='min', factor=0.5, patience=2, verbose=True)
-    scheduler_gnn = lr_scheduler.ReduceLROnPlateau(optimizer_gnn, mode='min', factor=0.5, patience=2, verbose=True)
+    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2, verbose=True)
     
     # define the loss function
     criterion = nn.NLLLoss()
     
     if args.resume:
-        start_epoch, feature_extractor, gnn, optimizer_lstm, optimizer_gnn, scheduler_lstm, scheduler_gnn = torch_utils.load(args.resume, start_epoch, feature_extractor, gnn, optimizer_lstm, optimizer_gnn, scheduler_lstm, scheduler_gnn)
+        start_epoch, feature_extractor, gnn, optimizer, scheduler = torch_utils.load(args.resume, feature_extractor, gnn, optimizer, start_epoch, scheduler)
         append_line_to_log('resuming ' + args.resume + '... at epoch ' + str(start_epoch))
  
     # put model into the corresponding device
@@ -500,8 +535,7 @@ if __name__ == "__main__":
         #val_loss = validation(model, criterion1, criterion2, lamb, val_loader, device, append_line_to_log)
         val_loss = validation(epoch, feature_extractor, gnn, args.gnn_iter_num, args.gnn_out_size, criterion, val_loader, device, append_line_to_log)
         
-        scheduler_lstm.step(val_loss) # to use ReduceLROnPlateau must specify the matric
-        scheduler_gnn.step(val_loss) # to use ReduceLROnPlateau must specify the matric
+        scheduler.step(val_loss) # to use ReduceLROnPlateau must specify the matric
         
         # save the best model
         is_best = val_loss < best_val_loss
@@ -510,11 +544,11 @@ if __name__ == "__main__":
         if is_best:
              best_model_file = 'best_model_' + str(epoch) + '.pth'
              best_model_file = folderPath + best_model_file
-             torch.save(feature_extractor.state_dict(),gnn.state_dict(), best_model_file)
+             torch_utils.save_model(feature_extractor.state_dict(), gnn.state_dict(), best_model_file)
         model_file = 'model_' + str(epoch) + '.pth'
         model_file = folderPath + model_file
     
-        torch.save(feature_extractor.state_dict(), gnn.state_dict(), model_file)
+        torch_utils.save_model(feature_extractor.state_dict(), gnn.state_dict(), model_file)
         append_line_to_log('Saved model to ' + model_file)
 
 print("validation loss history:", history)
