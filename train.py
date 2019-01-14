@@ -64,8 +64,8 @@ def parse_cli():
     
     # add parser
     # hyperparameter
-    parser.add_argument('--batch-size', type=int, default=params['batch_size'], metavar='N',
-                        help='input batch size for training (default: ' + str(params['batch_size']) + ')')
+    #parser.add_argument('--batch-size', type=int, default=params['batch_size'], metavar='N',
+    #                    help='input batch size for training (default: ' + str(params['batch_size']) + ')')
     
     parser.add_argument('--epochs', type=int, default=params['epochs'], metavar='N',
                         help='number of epochs to train (default: ' + str(params['epochs']) + ')')
@@ -84,9 +84,6 @@ def parse_cli():
     
     parser.add_argument('--gnn_activation', default=params['gnn_activation'], type=str, metavar='ACT',
                        help="gnn activation function of aggregation function.")
-
-    parser.add_argument('--epochs', type=int, default=params['epochs'], metavar='N',
-                        help='number of epochs to train (default: ' + str(params['epochs']) + ')')
 
     parser.add_argument('--lr', type=float, default=params['init_learning_rate'], metavar='LR',
                         help='inital learning rate (default: ' + str(params['init_learning_rate']) + ')')
@@ -481,7 +478,7 @@ if __name__ == "__main__":
     
     # define the dataloader
     train_loader = DataLoader(ARC_Dataset(train_dir, dataset="train", is_easy=args.is_easy), batch_size=1, shuffle=True)
-    val_loader = DataLoader(ARC_Dataset(train_dir, dataset="dev", is_easy=args.is_easy), batch_size=1, shuffle=True)
+    val_loader = DataLoader(ARC_Dataset(train_dir, dataset="dev", is_easy=args.is_easy), batch_size=1, shuffle=False)
 
     # load the token2idx dict and word mtx
     token2idx_dict = load_token2idx(args.word2vec_dir)
