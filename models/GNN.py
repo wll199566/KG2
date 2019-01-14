@@ -11,12 +11,16 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # define massage and reduce function.
-gcn_msg = fn.copy_src(src='feat', out='m')
-#gcn_reduce = fn.sum(msg='m', out='h')
-def gcn_reduce(nodes):
-    # The argument is a batch of nodes.
-    reduced = torch.sum(nodes.mailbox['m'], 1) + nodes.data['feat']
-    return {'feat': reduced}
+#gcn_msg = fn.copy_src(src='feat', out='m')
+def gcn_msg(edges):
+    return {'m': edges.src['feat'] + edges.dst['feat']}
+
+gcn_reduce = fn.sum(msg='m', out='feat')
+
+#def gcn_reduce(nodes):
+#    # The argument is a batch of nodes.
+#    reduced = torch.sum(nodes.mailbox['m'], 1) + nodes.data['feat']
+#    return {'feat': reduced}
     
 
 # define the node UDF for apply_nodes, which consists of 
@@ -66,5 +70,7 @@ class GCN(nn.Module):
 
         return x
 
-#net = GCN(50, 40, 30, F.relu, 30, 20, F.relu)
-#print(net)
+if __name__ == "__main__":
+
+    net = GCN(50, 20, 50, F.relu)
+    print(net)
