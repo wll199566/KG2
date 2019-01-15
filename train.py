@@ -214,7 +214,8 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
         # NOTE that first n graphs are for hypothesis and the left are supports
         # each row indicates one feature for one node.
         dgl_bg = dgl.batch(batched_graphs)   
-
+        dgl_bg.ndata['feat'] = dgl_bg.ndata['feat'].to(device)
+        
         # feed dgl batched graph into gnn_model
         for i in range(gnn_iter_num):
             batched_result = gnn_model(dgl_bg)
@@ -229,6 +230,7 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
         # construct a tensor for all hypo graphs
         # 20 is the output feature dim from GNN
         hypo_pred_nodes_feature = torch.zeros(label["num_of_choices"][0], max_num_pred_nodes, gnn_out_size)
+        hypo_pred_nodes_feature = hypo_pred_nodes_feature.to(device)
         
         # for the supports, one layer contains all pred nodes feature for one choice(20 supp graphs).
         # get the max number of pred nodes in all supp graphs
@@ -242,6 +244,7 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
         # construct a tensor for all supp graphs
         # 20 is the output feature dim from GNN
         supp_pred_nodes_feature = torch.zeros(label["num_of_choices"][0], max_num_pred_nodes, gnn_out_size)
+        supp_pred_nodes_feature = supp_pred_nodes_feature.to(device)
 
         # Second, to put the corresponding pred node feature into corresponding position in those tensors.
         batched_result_row = 0 # records the current batched_result row which will update after each graph
@@ -267,6 +270,8 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
         # for each layer(choice) of hypo and supp, we need to compute the inner product to get the scoring function
         # can organize this to a function
         max_scores = torch.zeros(label["num_of_choices"][0])  # to compute the max score for each choice
+        max_scores = max_scores.to(device)
+
         for layer in range(label["num_of_choices"][0]):
             inner_product = torch.mm(hypo_pred_nodes_feature[layer], torch.t(supp_pred_nodes_feature[layer]))
             max_inner_product = torch.max(inner_product)
@@ -275,7 +280,7 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
         max_scores = F.log_softmax(max_scores, dim=0)  # use log_softmax since we use NLLLoss
 
         # compute the loss
-        loss = criterion(max_scores.unsqueeze(0), label["answerKey"])
+        loss = criterion(max_scores.unsqueeze(0), label["answerKey"].to(device))
         
         # to the backprop
         feature_extractor_model.zero_grad()
@@ -328,7 +333,11 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
     end = time.time()
     feature_extractor_model.val()
     gnn_model.val()
-
+    
+    # define statistical variables to compute the accuracy
+    correct = 0  # number of correct classified samples
+    total = 0  # number of total samples
+    
     with torch.no_grad():
         # use dataloader to get the data.
         for batch_idx, data in enumerate(train_loader, 1):
@@ -379,7 +388,8 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
             # NOTE that first n graphs are for hypothesis and the left are supports
             # each row indicates one feature for one node.
             dgl_bg = dgl.batch(batched_graphs)   
-    
+            dgl_bg.ndata['feat'] = dgl_bg.ndata['feat'].to(device)
+
             # feed dgl batched graph into gnn_model
             for i in range(gnn_iter_num):
                 batched_result = gnn_model(dgl_bg)
@@ -394,7 +404,8 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
             # construct a tensor for all hypo graphs
             # 20 is the output feature dim from GNN
             hypo_pred_nodes_feature = torch.zeros(label["num_of_choices"][0], max_num_pred_nodes, gnn_out_size)
-            
+            hypo_pred_nodes_feature = hypo_pred_nodes_feature.to(device)
+
             # for the supports, one layer contains all pred nodes feature for one choice(20 supp graphs).
             # get the max number of pred nodes in all supp graphs
             for i in range(label["num_of_choices"][0]):
@@ -407,7 +418,8 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
             # construct a tensor for all supp graphs
             # 20 is the output feature dim from GNN
             supp_pred_nodes_feature = torch.zeros(label["num_of_choices"][0], max_num_pred_nodes, gnn_out_size)
-    
+            supp_pred_nodes_feature = supp_pred_nodes_feature.to(device)
+            
             # Second, to put the corresponding pred node feature into corresponding position in those tensors.
             batched_result_row = 0 # records the current batched_result row which will update after each graph
             
@@ -432,34 +444,45 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
             # for each layer(choice) of hypo and supp, we need to compute the inner product to get the scoring function
             # can organize this to a function
             max_scores = torch.zeros(label["num_of_choices"][0])  # to compute the max score for each choice
+            max_scores = max_scores.to(device)
+
             for layer in range(label["num_of_choices"][0]):
                 inner_product = torch.mm(hypo_pred_nodes_feature[layer], torch.t(supp_pred_nodes_feature[layer]))
                 max_inner_product = torch.max(inner_product)
                 max_scores[layer] = max_inner_product - 0.5        
             
             max_scores = F.log_softmax(max_scores, dim=0)  # use log_softmax since we use NLLLoss
-    
+            
+            # computer the accuracy
+            _, predicted = torch.max(max_scores, dim=0)
+            correct += (predicted==label["answerKey"]).sum().item()
+            total += label["answerKey"].size(0)
+            accuracy = correct / total
+
             # compute the loss
-            loss = criterion(max_scores.unsqueeze(0), label["answerKey"])
+            loss = criterion(max_scores.unsqueeze(0), label["answerKey"].to(device))
 
             # records essential information into log file.
         log_callback('epoch: {0}\t'
                 'Time {batch_time.sum:.3f}s / {1} epochs, ({batch_time.avg:.3f})\t'
                 'Data load {data_time.sum:.3f}s / {1} epochs, ({data_time.avg:3f})\n'
-                'Loss = {loss:.8f}\n'.format(
+                'Loss = {loss:.8f}\n'
+                'Accuracy = {acc:.4f}%\n'.format(
             epoch, batch_idx, batch_time=batch_time,
-            data_time=data_time, loss=loss.item()))
+            data_time=data_time, loss=loss.item(), acc=accuracy*100))
         
         log_callback()
         
         log_callback('Loss = {loss:.8f}\t'
                 .format(loss=loss.item()))
+        
+        log_callback('Accuracy = {acc:.4f}%\t'.format(acc=accuracy*100))
 
         log_callback(Timer.timeString())
 
         batch_time.reset()
          
-        return loss.item()        
+        return loss.item(), accuracy        
 
 
 ############################################ main #########################################
@@ -519,7 +542,7 @@ if __name__ == "__main__":
     append_line_to_log(str(device))
 
     torch.backends.cudnn.benchmark = True
-    history = {'validation_loss':[]}
+    history = {'validation_loss':[], 'validation_accuracy':[]}
 
     best_val_loss = np.inf
 
@@ -530,7 +553,9 @@ if __name__ == "__main__":
         train(epoch, feature_extractor, gnn, args.gnn_iter_num, args.gnn_out_size, optimizer, scheduler, criterion, train_loader, device, append_line_to_log)
         
         #val_loss = validation(model, criterion1, criterion2, lamb, val_loader, device, append_line_to_log)
-        val_loss = validation(epoch, feature_extractor, gnn, args.gnn_iter_num, args.gnn_out_size, criterion, val_loader, device, append_line_to_log)
+        val_loss, val_acc = validation(epoch, feature_extractor, gnn, args.gnn_iter_num, args.gnn_out_size, criterion, val_loader, device, append_line_to_log)
+        history['validation_loss'].append(val_loss)
+        history['validation_accuracy'].append(val_acc)
         
         scheduler.step(val_loss) # to use ReduceLROnPlateau must specify the matric
         
@@ -548,4 +573,4 @@ if __name__ == "__main__":
         torch_utils.save_model(feature_extractor.state_dict(), gnn.state_dict(), model_file)
         append_line_to_log('Saved model to ' + model_file)
 
-print("validation loss history:", history)
+    print("validation history:", history)
