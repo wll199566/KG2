@@ -3,6 +3,7 @@ This script is for training KG2 networks.
 """
 # numpy
 import numpy as np
+
 # torch
 import torch
 import torch.nn as nn
@@ -166,7 +167,7 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
         learning_rate = param_group['lr']
 
     # use dataloader to get the data.
-    for batch_idx, data in enumerate(train_loader, 1):
+    for batch_idx, data in enumerate(loader, 1):
         # hypo_graphs contains hypothesis dict of dict returned by openie2dict.py
         # supp_graphs contains support dict of dict returned by openie2dict.py
         # label contains dict of correct label. 
@@ -340,7 +341,7 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
     
     with torch.no_grad():
         # use dataloader to get the data.
-        for batch_idx, data in enumerate(train_loader, 1):
+        for batch_idx, data in enumerate(loader, 1):
             # hypo_graphs contains hypothesis dict of dict returned by openie2dict.py
             # supp_graphs contains support dict of dict returned by openie2dict.py
             # label contains dict of correct label. 
@@ -501,7 +502,7 @@ if __name__ == "__main__":
     
     # define the dataloader
     train_loader = DataLoader(ARC_Dataset(train_dir, dataset="train", is_easy=args.is_easy), batch_size=1, shuffle=True)
-    val_loader = DataLoader(ARC_Dataset(train_dir, dataset="dev", is_easy=args.is_easy), batch_size=1, shuffle=False)
+    val_loader = DataLoader(ARC_Dataset(val_dir, dataset="dev", is_easy=args.is_easy), batch_size=1, shuffle=False)
 
     # load the token2idx dict and word mtx
     token2idx_dict = load_token2idx(args.word2vec_dir)
