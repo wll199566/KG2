@@ -13,14 +13,13 @@ import torch.nn.functional as F
 # define massage and reduce function.
 #gcn_msg = fn.copy_src(src='feat', out='m')
 def gcn_msg(edges):
-    return {'m': edges.src['feat'] + edges.dst['feat']}
+    return {'m': edges.src['feat']}
 
-gcn_reduce = fn.sum(msg='m', out='feat')
-
-#def gcn_reduce(nodes):
-#    # The argument is a batch of nodes.
-#    reduced = torch.sum(nodes.mailbox['m'], 1) + nodes.data['feat']
-#    return {'feat': reduced}
+#gcn_reduce = fn.sum(msg='m', out='feat')
+def gcn_reduce(nodes):
+    # The argument is a batch of nodes.
+    reduced = torch.sum(nodes.mailbox['m'], 1) + nodes.data['feat']
+    return {'feat': reduced}
     
 
 # define the node UDF for apply_nodes, which consists of 
@@ -55,7 +54,9 @@ class GCNLayer(nn.Module):
         self.apply_mod = NodeApplyModule(in_feats, hidden_feats, out_feats, activation)
 
     def forward(self, g):
-        g.update_all(gcn_msg, gcn_reduce)
+        #g.update_all(gcn_msg, gcn_reduce)
+        # Note that only using send_and_recv, it preserves the original source node features.
+        g.send_and_recv(g.edges(),message_func=gcn_msg, reduce_func=gcn_reduce)
         g.apply_nodes(func=self.apply_mod)
         return g.ndata.pop('feat')
 
