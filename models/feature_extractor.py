@@ -55,6 +55,11 @@ class FeatureExtractor(nn.Module):
         for node_index in list(graph.nodes()):
             list_tokenized_words = word_tokenize(graph.nodes[node_index]["context"])
             seqs.append(list_tokenized_words)
+        
+        # need to handle the case that "sub", "pred" or "obj" is "".
+        for seqs_list in seqs:
+            if seqs_list == []:
+                seqs_list.append("Empty")
 
         # step 1: construct the vocab2idx dictionary
         # this step is finished, and we can use self.token2idx_dict
