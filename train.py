@@ -32,6 +32,7 @@ from utils.file_system_utils import create_folder
 from utils.Timer import Timer
 from utils.AverageMeter import AverageMeter
 from utils import torch_utils 
+from utils.math_utils import normalize_tensor
 
 # system
 import argparse
@@ -129,19 +130,6 @@ def parse_cli():
     args = parser.parse_args()
 
     return args
-
-
-def normalize_tensor(torch_tensor):
-    """
-    normalize torch tensor.
-    Args:
-        -torch_tensor: torch tensor to normalize.
-    Returns:
-        -the L2-normalized tensor. 
-    """
-    torch_tensor_n = torch.norm(torch_tensor, p=2).detach()
-    
-    return torch_tensor.div(torch_tensor_n.expand_as(torch_tensor))
 
 
 def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size, optimizer, scheduler, criterion, loader, device, log_callback):

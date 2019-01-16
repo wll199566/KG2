@@ -26,6 +26,7 @@ from modules.dict2graph_each_dict import dict2graph_hypo, dict2graph_support
 from utils.nlp_utils import load_token2idx, load_word_matrix
 from utils.file_system_utils import load_config
 from utils import torch_utils
+from utils.math_utils import normalize_tensor
 
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
