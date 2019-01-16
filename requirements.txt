@@ -1,0 +1,6 @@
+pyyaml
+numpy
+torch >= 0.4.1
+
+networkx
+dgl >= 0.1.3
