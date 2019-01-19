@@ -72,7 +72,7 @@ def evaluation(feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size, c
             pred_index_list_hypo = []  # to store the pred index for each hypothesis graph.
             node_num_hypo_graphs = []  # to store the number of total nodes in each hypo graph.
             for i, choice in enumerate(hypo_graphs["graphs_for_question"]):
-                hypo_graphs["graphs_for_question"][i]["graph"] = feature_extractor_model(choice['graph'] )
+                hypo_graphs["graphs_for_question"][i]["graph"] = feature_extractor_model(choice['graph'], device)
                 batched_graphs.append(hypo_graphs["graphs_for_question"][i]["graph"])
                 node_num_hypo_graphs.append(hypo_graphs["graphs_for_question"][i]["graph"].number_of_nodes())
                 # if the whole graph is Empty
@@ -86,7 +86,7 @@ def evaluation(feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size, c
             node_num_supp_graphs = []  # to store the number of total nodes in each support graph.
             for i, choice in enumerate(supp_graphs["graphs_for_question"]):
                 for j, support in enumerate(choice["graphs_for_choice"]):
-                    supp_graphs["graphs_for_question"][i]["graphs_for_choice"][j]["graph"] = feature_extractor(support["graph"]) 
+                    supp_graphs["graphs_for_question"][i]["graphs_for_choice"][j]["graph"] = feature_extractor(support["graph"], device) 
                     batched_graphs.append(supp_graphs["graphs_for_question"][i]["graphs_for_choice"][j]["graph"])
                     node_num_supp_graphs.append(supp_graphs["graphs_for_question"][i]["graphs_for_choice"][j]["graph"].number_of_nodes())
                     # if the whole graph is Empty
@@ -119,10 +119,10 @@ def evaluation(feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size, c
 
             # for the supports, one layer contains all pred nodes feature for one choice(20 supp graphs).
             # get the max number of pred nodes in all supp graphs
+            max_num_pred_nodes = 0
             for i in range(label["num_of_choices"][0]):
-                max_num_pred_nodes = 0
                 num_pred_nodes = 0
-                for pred in pred_index_list_supp[i: i+20]:
+                for pred in pred_index_list_supp[i*20: (i+1)*20]:
                     num_pred_nodes += len(pred)
                 if max_num_pred_nodes < num_pred_nodes:
                     max_num_pred_nodes = num_pred_nodes

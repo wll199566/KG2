@@ -42,8 +42,8 @@ def dict2graph_hypo(hypo_ques_dict):
                 continue
             # construct the piece2idx dictionary
             for piece in sentence.values():
-                # handle the case that obj is empty
-                if piece == []:
+                # handle the case that piece is empty
+                if piece == [] or piece == '':
                     continue
                 if isinstance(piece[0], str) and (piece[0] not in piece2idx):
                     piece2idx[piece[0]] = index_of_node
@@ -155,8 +155,8 @@ def dict2graph_support(support_ques_dict):
                 # construct the piece2idx dictionary
                 for piece in sentence.values():
                     #print(piece)
-                    # handle the case that obj is empty
-                    if piece == []:
+                    # handle the case that piece is empty
+                    if piece == [] or piece = '':
                         continue
                     if isinstance(piece[0], str) and (piece[0] not in piece2idx):
                         piece2idx[piece[0]] = index_of_node
