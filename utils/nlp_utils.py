@@ -202,7 +202,7 @@ def load_token2idx(path):
     """
     Load token2idx dictionary.
     Args:
-        -path: the path to the token2idx dictionary file, like "../unlemmatized_data"
+        -path: the path to the token2idx dictionary file, like "../data"
     Outputs:
         -token2idx_dict: token2idx dictionary.
     """    
@@ -218,7 +218,7 @@ def load_word_matrix(path):
     """
     Load word representation matrix.
     Args:
-        -path: the path to the token2idx dictionary file, like "../unlemmatized_data"
+        -path: the path to the token2idx dictionary file, like "../data"
     Outputs:
         -word_mtx: pretrained word matrix.    
     """    
@@ -250,27 +250,27 @@ if __name__ == "__main__":
     # print('\n'.join(sentence_list))
 
     # test token_to_index
-    token_size, token2idx_dict = token_to_index("../unlemmatized_data")
+    token_size, token2idx_dict = token_to_index("../data")
     print("There are", token_size, "tokens in the hypothesis and supports")
-    with open("../unlemmatized_data/Token2idx.json", 'w') as fout:
+    with open("../data/Token2idx.json", 'w') as fout:
        json.dump(token2idx_dict, fout)
-    #with open("../unlemmatized_data/Token2idx.json", "r") as fin:
+    #with open("../data/Token2idx.json", "r") as fin:
     #    for line in fin:
     #        token2idx_dict = json.loads(line)
     #print("good:", token2idx_dict["good"])
     #print("pencil:", token2idx_dict["pencil"])
 
     # test construct_w2v_matrix
-    #with open("../unlemmatized_data/Token2idx.json", "r") as fin:
+    #with open("../data/Token2idx.json", "r") as fin:
     #   for line in fin:
     #       token2idx_dict = json.loads(line)
     token_size = len(token2idx_dict)
     glove = load_glove('../data/GloVe/glove.6B.50d.txt')
     W = construct_w2v_matrix(glove, 50, token2idx_dict, token_size)
     W_list = W.tolist()
-    json.dump(W_list, codecs.open("../unlemmatized_data/Wordmtx.json",'w', encoding='utf-8'))
+    json.dump(W_list, codecs.open("../data/Wordmtx.json",'w', encoding='utf-8'))
     
-    with codecs.open("../unlemmatized_data/Wordmtx.json", 'r', encoding='utf-8') as fin:
+    with codecs.open("../data/Wordmtx.json", 'r', encoding='utf-8') as fin:
         obj_text = fin.read()
         embedding_matrix = json.loads(obj_text)
         print("load embedding matrix")

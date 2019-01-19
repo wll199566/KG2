@@ -94,7 +94,7 @@ class ARC_Dataset(Dataset):
 
 if __name__ == "__main__":
 
-    hypo_graph, supp_graph, label = ARC_Dataset("./unlemmatized_data", dataset="dev", is_easy=True).__getitem__(0)
+    hypo_graph, supp_graph, label = ARC_Dataset("./data", dataset="dev", is_easy=True).__getitem__(0)
     #print(hypo_graph["id"])
     #print(supp_graph["id"])
     #print(label["id"])
