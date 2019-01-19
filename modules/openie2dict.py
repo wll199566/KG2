@@ -115,6 +115,9 @@ def openie2dict_hypo(openie_file, output_file):
                     # add the label to the hypothesis dictionary
                     dict_for_choice = {}
                     dict_for_choice['label'] = label
+                    # NOTE to handle the case that there is nothing between two '-----' lines.
+                    if triples_for_choice == []:
+                        triples_for_choice.append({})
                     dict_for_choice['triples_for_choice'] = triples_for_choice
                     # add choice level structure into question level structure
                     hypo_graph.append(dict_for_choice)
