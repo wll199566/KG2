@@ -76,7 +76,7 @@ class FeatureExtractor(nn.Module):
         # get the lenth of each seq in our batch (all node contexts in a graph)
         seq_lengths = torch.LongTensor(list(map(len, vectorized_seqs))).to(device)
         # initialize the sentence matrix according to the max length and fill it      
-        seq_tensor = torch.zeros((len(vectorized_seqs), seq_lengths.max())).long()
+        seq_tensor = torch.zeros((len(vectorized_seqs), seq_lengths.max())).long().to(device)
         for idx, (seq, seqlen) in enumerate(zip(vectorized_seqs, seq_lengths)):
             seq_tensor[idx, :seqlen] = torch.LongTensor(seq).to(device)
 
