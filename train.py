@@ -320,8 +320,8 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
         -log_callback: used for write into log file.
     """
     end = time.time()
-    feature_extractor_model.val()
-    gnn_model.val()
+    feature_extractor_model.eval()
+    gnn_model.eval()
     
     # define statistical variables to compute the accuracy
     correct = 0  # number of correct classified samples
@@ -444,7 +444,7 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
             
             # computer the accuracy
             _, predicted = torch.max(max_scores, dim=0)
-            correct += (predicted==label["answerKey"]).sum().item()
+            correct += (predicted==label["answerKey"].to(device)).sum().item()
             total += label["answerKey"].size(0)
             accuracy = correct / total
 
@@ -555,11 +555,11 @@ if __name__ == "__main__":
         if is_best:
              best_model_file = 'best_model_' + str(epoch) + '.pth'
              best_model_file = folderPath + best_model_file
-             torch_utils.save_model(feature_extractor.state_dict(), gnn.state_dict(), best_model_file)
+             torch_utils.save_model(feature_extractor, gnn, best_model_file)
         model_file = 'model_' + str(epoch) + '.pth'
         model_file = folderPath + model_file
     
-        torch_utils.save_model(feature_extractor.state_dict(), gnn.state_dict(), model_file)
+        torch_utils.save_model(feature_extractor, gnn, model_file)
         append_line_to_log('Saved model to ' + model_file)
 
     print("validation history:", history)
