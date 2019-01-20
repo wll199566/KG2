@@ -156,7 +156,7 @@ def dict2graph_support(support_ques_dict):
                 for piece in sentence.values():
                     #print(piece)
                     # handle the case that piece is empty
-                    if piece == [] or piece = '':
+                    if piece == [] or piece == '':
                         continue
                     if isinstance(piece[0], str) and (piece[0] not in piece2idx):
                         piece2idx[piece[0]] = index_of_node
