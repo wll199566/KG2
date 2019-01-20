@@ -25,7 +25,7 @@ class ARC_Dataset(Dataset):
                 supp_graph_file = folder + "/ARC-Supports-dict/ARC-Easy/ARC-Easy-Dev-Supports-dict.txt"
                 labels_file = folder + "/ARC-Labels/ARC-Easy/ARC-Easy-Dev-Labels.jsonl"
             elif dataset == "test":
-                hypo_graph_file = folder + "/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Test-dict.txt"    
+                hypo_graph_file = folder + "/ARC-Hypothesis-dict/ARC-Easy/ARC-Easy-Test-Hypothesis-dict.txt"    
                 supp_graph_file = folder + "/ARC-Supports-dict/ARC-Easy/ARC-Easy-Test-Supports-dict.txt"
                 labels_file = folder + "/ARC-Labels/ARC-Easy/ARC-Easy-Test-Labels.jsonl"
             else:

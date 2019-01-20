@@ -28,7 +28,10 @@ from utils.file_system_utils import load_config
 from utils import torch_utils
 from utils.math_utils import normalize_tensor
 
-torch.set_default_tensor_type('torch.cuda.FloatTensor')
+# system
+import argparse
+
+#torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 
 def evaluation(feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size, criterion, loader, device):
@@ -166,7 +169,7 @@ def evaluation(feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size, c
             
             # computer the accuracy
             _, predicted = torch.max(max_scores, dim=0)
-            correct += (predicted==label["answerKey"]).sum().item()
+            correct += (predicted==label["answerKey"].to(device)).sum().item()
             total += label["answerKey"].size(0)
             accuracy = correct / total
 
@@ -177,6 +180,10 @@ def evaluation(feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size, c
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="evaluation")
+    parser.add_argument("--model_file", type=str, default="./data/checkpoints/model.pth",
+                        help="the file of stored model we want to evaluate")
+    args = parser.parse_args()                    
 
     params = load_config('config.yaml')
 
@@ -190,14 +197,14 @@ if __name__ == "__main__":
     word_mtx = load_word_matrix(word2vec_dir)
 
     # load best model
-    best_model_file = '../checkpoints/......pth'
+    best_model_file = args.model_file
     
     # load models
     feature_extractor = FeatureExtractor(token2idx_dict, word_mtx, params['embedding_size'])
     
-    if params['activation'] == 'relu':
+    if params['gnn_activation'] == 'relu':
         activation_func = F.relu
-    elif params['activation'] == 'sigmoid':
+    elif params['gnn_activation'] == 'sigmoid':
         activation_func = F.sigmoid
     else:
         raise NotImplementedError("activation function should be relu or sigmoid")        
@@ -214,7 +221,7 @@ if __name__ == "__main__":
     feature_extractor.to(device)
     gnn.to(device)
 
-    torch.backends.cudnn.benchmark = True
+    #torch.backends.cudnn.benchmark = True
 
     # compute the 
     _, eval_acc = evaluation(feature_extractor, gnn, params['gnn_iter_num'], params['gnn_out_size'], criterion, eval_loader, device)
