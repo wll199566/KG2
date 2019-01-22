@@ -473,7 +473,7 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
         log_callback()
         
         log_callback('Validataion Loss = {loss:.8f}\t'
-                .format(loss=running_loss/batch_idx)
+                .format(loss=running_loss/batch_idx))
         
         log_callback('Validataion Accuracy = {acc:.4f}%\t'.format(acc=accuracy*100))
 
