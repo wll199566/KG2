@@ -154,6 +154,8 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
     for param_group in optimizer.param_groups:
         learning_rate = param_group['lr']
 
+    running_loss = 0.0  # to get the running loss of arg.log_interval mini-batch
+   
     # use dataloader to get the data.
     for batch_idx, data in enumerate(loader, 1):
         # hypo_graphs contains hypothesis dict of dict returned by openie2dict.py
@@ -271,6 +273,9 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
         # compute the loss
         loss = criterion(max_scores.unsqueeze(0), label["answerKey"].to(device))
         
+        # add running loss
+        running_loss += loss.item()
+
         # to the backprop
         feature_extractor_model.zero_grad()
         gnn_model.zero_grad()
@@ -296,10 +301,12 @@ def train(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_size,
             
             log_callback('Loss = {loss:.8f}\t'
                     .format(loss=loss.item()))
+            log_callback('Average Loss = {avg_loss:.8f}\t'.format(avg_loss=running_loss/args.log_interval))        
             
             log_callback()
             log_callback("current time: " + Timer.timeString())
             
+            running_loss = 0.0
             batch_time.reset()
             data_time.reset()
 
@@ -328,6 +335,7 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
     total = 0  # number of total samples
     
     with torch.no_grad():
+        running_loss = 0.0  # to get the running loss of the dev set.
         # use dataloader to get the data.
         for batch_idx, data in enumerate(loader, 1):
             # hypo_graphs contains hypothesis dict of dict returned by openie2dict.py
@@ -450,28 +458,34 @@ def validation(epoch, feature_extractor_model, gnn_model, gnn_iter_num, gnn_out_
 
             # compute the loss
             loss = criterion(max_scores.unsqueeze(0), label["answerKey"].to(device))
+            
+            # compute running loss
+            running_loss += loss.item()
 
-            # records essential information into log file.
+        # records essential information into log file.
         log_callback('epoch: {0}\t'
                 'Time {batch_time.sum:.3f}s / {1} epochs, ({batch_time.avg:.3f})\t'
                 'Data load {data_time.sum:.3f}s / {1} epochs, ({data_time.avg:3f})\n'
-                'Loss = {loss:.8f}\n'
-                'Accuracy = {acc:.4f}%\n'.format(
+                .format(
             epoch, batch_idx, batch_time=batch_time,
-            data_time=data_time, loss=loss.item(), acc=accuracy*100))
+            data_time=data_time))
         
         log_callback()
         
-        log_callback('Loss = {loss:.8f}\t'
-                .format(loss=loss.item()))
+        log_callback('Validataion Loss = {loss:.8f}\t'
+                .format(loss=running_loss/batch_idx)
         
-        log_callback('Accuracy = {acc:.4f}%\t'.format(acc=accuracy*100))
+        log_callback('Validataion Accuracy = {acc:.4f}%\t'.format(acc=accuracy*100))
+
+        log_callback()
 
         log_callback(Timer.timeString())
 
+        log_callback()
+
         batch_time.reset()
          
-        return loss.item(), accuracy        
+        return running_loss, accuracy        
 
 
 ############################################ main #########################################
