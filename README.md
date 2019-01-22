@@ -7,3 +7,5 @@ For the dataset, [here](https://drive.google.com/file/d/1BZu8KIVJWxa_ppk7yk-Uch0
 To train the model, please run `python train.py`. The configuration is in `config.yaml`. 
 
 To evaluate the model, please run `python evaluation.py --model_file {path to your model file}`. It will return the test accuracy. 
+
+To change the dataset from `ARC-Easy` to `ARC-Challenge`, please change `is_easy` from `True` to `False` in `config.yaml`. The default is `True`.
